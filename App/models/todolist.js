@@ -1,14 +1,9 @@
-module.exports = (mongoose) => {
-  const Toodolist = mongoose.model(
-    "user",
-    mongoose.Schema(
-      {
-        title: String,
-        description: String,
-      },
-      { timestamps: true }
-    )
-  );
+const mongoose = require("mongoose");
 
-  return User;
-};
+const todoSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  description: String,
+  completed: { type: Boolean, default: false },
+});
+
+module.exports = mongoose.model("Todo", todoSchema);

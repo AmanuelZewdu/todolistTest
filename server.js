@@ -1,8 +1,9 @@
 const express = require("express");
-const cors = require("cors");
 const mongoose = require("mongoose");
 const User = require("./App/models/user");
+const toDoList = require("./App/models/todolist");
 const app = express();
+
 app.use(express.json());
 
 // routes
@@ -12,29 +13,77 @@ app.get("/", (req, res) => {
 });
 
 app.get("/blog", (req, res) => {
-  res.send("Hello , My name is");
+  res.send("Hello Beer, My name is Beer ");
 });
 
-//const app = express();
-
-app.use(cors(corsOptions));
-
-app.use(express.json());
-
-app.use(express.urlencoded({ extended: true }));
-
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to  application." });
+//Add User
+app.post("/user", async (req, res) => {
+  try {
+    const user = await User.create(req.body);
+    res.status(200).json(user);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: error.message });
+  }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
+//Get User
+app.get("/users", async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+//Add ToDOITem
+app.post("/item", async (req, res) => {
+  try {
+    const item = await toDoList.create(req.body);
+    res.status(200).json(item);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+//Get User
+app.get("/items", async (req, res) => {
+  try {
+    const items = await toDoList.find({});
+    res.status(200).json(items);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+//Update Items
+
+app.put("/items/:id", async (req, res) => {
+  const itemId = req.params.id;
+  const newDesc = req.body.description;
+
+  try {
+    const item = await Beer.findById(itemId);
+    if (!item) {
+      res.status(404).json({ message: "Beer not found" });
+      return;
+    }
+
+    item.description.push(newDesc);
+
+    await item.save();
+    res.status(200).json({ message: "item  updated" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 mongoose
   .connect(
-    "mongodb+srv://admin:123456789Aman@cluster0.ukddws6.mongodb.net/Node-API?retryWrites=true&w=majority"
+    "mongodb+srv://admin:123456789Aman@cluster0.ukddws6.mongodb.net/todolist?retryWrites=true&w=majority"
+    // "mongodb+srv://admin:123456789Aman@cluster0.ukddws6.mongodb.net/"
   )
   .then(() => {
     app.listen(3000, () => {
@@ -45,24 +94,3 @@ mongoose
   .catch((error) => {
     console.log(error);
   });
-
-app.post("/user", async (req, res) => {
-  debugger;
-  console.log("body===>", req.body);
-  try {
-    const user = await User.create(req.body);
-    res.status(200).json(user);
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: error.message });
-  }
-});
-
-app.get("/", async (req, res) => {
-  try {
-    const users = await user.find({});
-    res.status(200).json(beers);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-// Define beer schema
+// Define user schema
 const userSchema = mongoose.Schema(
   {
     username: { type: String, required: [true, "Please enter name"] },
